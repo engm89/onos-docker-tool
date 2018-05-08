@@ -1,6 +1,11 @@
 #!/bin/bash
 nodes=("$@")
 
+if [ $# -eq 0 ]; then
+    echo "ONOS controller IPs have not been provided. Please specify one."
+    exit 1
+fi
+
 # stop & remove ONOS-SONA container
 echo "Removing ONOS-SONA docker image..."
 
