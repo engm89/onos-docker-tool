@@ -9,9 +9,15 @@ To run the provided toolset locally, the machine should be installed python, git
 $ git clone https://github.com/sonaproject/onos-docker-tool.git
 ```
 
-2. Create "sdn" users to all remote machines.
+2. Create "sdn" users at all remote machines.
 
 3. Parameterize remote machines's IP address into bash_profile. By default we configured three ONOS nodes's IP address. Please add or remove IPs to fulfill your requirement.
+```
+$ cat bash_profile
+export OC1=192.168.56.101
+export OC2=192.168.56.102
+export OC3=192.168.56.103
+```
 
 4. Generate private/public RSA key pair at local machine.
 
@@ -22,16 +28,17 @@ $ ssh-keygen -t rsa
 5. Distribute public RSA key to all remote machine.
 ```
 $ ssh-copy-id $OC1
-$ ssh-copy-id $OC2 
+$ ssh-copy-id $OC2
+$ ssh-copy-id $OC3
 ...
 ```
 
 6. Provision and launch ONOS at remote machines.
 ```
-$ ./start.sh $OC1 $OC2 ...
+$ ./start.sh $OC1 $OC2 $OC3 ...
 ```
 
 7. Stop and remove ONOS from remote machines.
 ```
-$ ./stop.sh $OC1 $OC2 ...
+$ ./stop.sh $OC1 $OC2 $OC3 ...
 ```
