@@ -21,7 +21,9 @@ $ ssh-keygen -t rsa
 
 5. Distribute public RSA key to all remote machine.
 ```
-$ ssh-copy-id $OC1 $OC2 ...
+$ ssh-copy-id $OC1
+$ ssh-copy-id $OC2 
+...
 ```
 
 6. Provision and launch ONOS at remote machines.
