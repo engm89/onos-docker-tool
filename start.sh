@@ -11,7 +11,7 @@ echo "Pulling ONOS-SONA docker image..."
 
 for ((i=0; i < $#; i++))
 {
-    ssh sdn@${nodes[$i]} "sudo docker pull gunine/onos-sona-docker:1.13.0"
+    ssh sdn@${nodes[$i]} "sudo docker pull opensona/onos-sona-docker:1.13.0"
     ssh sdn@${nodes[$i]} "sudo docker stop onos || true"
     ssh sdn@${nodes[$i]} "sudo docker rm onos || true"
 }
@@ -40,5 +40,5 @@ for ((i=0; i < $#; i++))
 echo "Launching ONOS cluster..."
 for ((i=0; i < $#; i++))
 {
-    ssh sdn@${nodes[$i]} "sudo docker run --rm -itd --network host --name onos -v ~/onos_config:/root/onos/config gunine/onos-sona-docker:1.13.0"
+    ssh sdn@${nodes[$i]} "sudo docker run --rm -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/onos-sona-docker:1.13.0"
 }
