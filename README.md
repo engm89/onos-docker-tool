@@ -1,48 +1,52 @@
 # Toolset for Managing ONOS Container Cluster
 
-This project contains a set of toolset which is used for managing ONOS cluster at docker environment. We assume that the users have configured at least one linux node (remote machine) to run docker container. Also the local machine where we run toolset, accesses to remote machine through SSH tunnel without providing any password. To accomplish this, we recommend the users to pre-create an user named "sdn" at all remote machines; distribute public RSA key from local machine to all remote machines. With this, local machine does not need to provide password when it accesses to remote machines.
+This project contains a set of tools which are used for managing a container based ONOS cluster. We assume that the users have configured at least one linux node (remote machine) for running a docker container. Also the local machine where we run this toolset, has privilege to access to the remote machine through SSH tunnel without providing the password. To achieve this, the users need to 1) pre-create an user named "sdn" at all remote machines; 2) distribute a public RSA key from the local machine to all remote machines. With this setup, the local machine does not need to provide any password when it accesses to the remote machines.
 
-To run the provided toolset locally, the machine should be installed python, git, and ssh related utilities (e.g., ssh-keygen, ssh-copy-id, etc.)
+To run the provided toolset, the local machine should be installed python, git, and ssh related utilities (e.g., ssh-keygen, ssh-copy-id, etc.)
 
 1. Download this toolset.
 ```
 $ git clone https://github.com/sonaproject/onos-docker-tool.git
 ```
 
-2. Create "sdn" users at all remote machines.
+2. Create the "sdn" users at all remote machines.
+```
+# useradd sdn
+# echo "sdn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# passwd sdn
+```
 
-3. Generate private/public RSA key pair at local machine.
-
+3. Generate a private/public RSA key pair at the local machine.
 ```
 $ ssh-keygen -t rsa
 ```
 
-4. Open bash_profile and configure remote machines's IP addresses. Note that those IP addresses should be accessable from local machine. Please add or remove IPs to fulfill your requirement.
+4. Open bash_profile and configure the remote machines's IP addresses. Note that those IP addresses should be accessable from the local machine. Please add or remove IPs to fulfill your requirement.
 ```
 export OC1=192.168.56.101
 export OC2=192.168.56.102
 export OC3=192.168.56.103
 ```
 
-In case you need to assign internally accessable IP addresses to form an ONOS cluster, please configure OC_IPS varaible. Otherwise, this tool will use publically accessable IP addresses (e.g., OC1 ~ OCN) to form an ONOS cluster.
+In case you need to assign internally accessable IP addresses (which are not accessable from the local machine) to form an ONOS cluster, please configure an OC_IPS variable. Otherwise, this toolset will use the publically accessable IP addresses (e.g., OC1 ~ OCN) to form an ONOS cluster.
 ```
 export OC_IPS="10.10.10.101 10.10.10.102 10.10.10.103"
 ```
 
-5. Distribute public RSA key to all remote machines.
+5. Distribute the public RSA key to all remote machines.
 ```
-$ ssh-copy-id $OC1
-$ ssh-copy-id $OC2
-$ ssh-copy-id $OC3
+$ ssh-copy-id sdn@$OC1
+$ ssh-copy-id sdn@$OC2
+$ ssh-copy-id sdn@$OC3
 ...
 ```
 
-6. Provision and launch ONOS container(s) at remote machines.
+6. Provision and launch the ONOS container(s) at the remote machines.
 ```
 $ ./start.sh
 ```
 
-7. Stop and remove ONOS containers from all remote machines.
+7. Stop and remove the ONOS containers from all the remote machines.
 ```
 $ ./stop.sh
 ```
