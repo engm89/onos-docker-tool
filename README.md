@@ -24,7 +24,7 @@ export OC2=192.168.56.102
 export OC3=192.168.56.103
 ```
 
-In case you need to assign internally accessable IP addresses to form an ONOS cluster, please configure OC_IPS varaible. Otherwise, this tool will publically accessable IP addresses like OC1 ~ OCN to form an ONOS cluster.
+In case you need to assign internally accessable IP addresses to form an ONOS cluster, please configure OC_IPS varaible. Otherwise, this tool will use publically accessable IP addresses (e.g., OC1 ~ OCN) to form an ONOS cluster.
 ```
 export OC_IPS="10.10.10.101 10.10.10.102 10.10.10.103"
 ```
