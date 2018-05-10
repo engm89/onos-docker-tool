@@ -42,9 +42,15 @@ echo "Pulling ONOS-SONA docker image..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
+
+    echo "Pulling ONOS-SONA docker image at ${!oc_name}..."
     ssh sdn@${!oc_name} "sudo docker pull opensona/onos-sona-nightly-docker"
-    ssh sdn@${!oc_name} "sudo docker stop onos || true"
-    ssh sdn@${!oc_name} "sudo docker rm onos || true"
+
+    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -f name=onos')" ]; then
+        echo "Wiping out existing ONOS-SONA container at ${!oc_name}..."
+        ssh sdn@${!oc_name} "sudo docker stop onos || true" > /dev/null
+        ssh sdn@${!oc_name} "sudo docker rm onos || true" > /dev/null
+    fi
 }
 
 # generate and inject cluster.json file
@@ -79,6 +85,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
     ssh sdn@${!oc_name} "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/onos-sona-nightly-docker"
+    ssh sdn@${!oc_name} "sudo docker ps"
 }
 
 echo "Done!"
