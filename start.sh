@@ -1,17 +1,23 @@
 #!/bin/bash
 
-ENV_VAR=`env | awk -F "=" '{print $1}' | grep "^OC[0-9]$"`
-ACCESS_IPS=($ENV_VAR)
-OC_IPS_ALT=""
+STALE_ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
+# shellcheck disable=SC2206
+STALE_ACCESS_IPS=($STALE_ENV_VAR)
 
-for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
 {
-    oc_name=${ACCESS_IPS[$i]}
-    unset $oc_name
+    oc_name=${STALE_ACCESS_IPS[$i]}
+    unset "$oc_name"
 }
 unset OC_IPS
 
-. bash_profile
+# shellcheck disable=SC1091
+source bash_profile
+
+ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
+# shellcheck disable=SC2206
+ACCESS_IPS=($ENV_VAR)
+OC_IPS_ALT=""
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
     echo "No ONOS Controller IP addresses were configured! Please configure IP address in bash_profile."
@@ -44,12 +50,13 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
 
     echo "Pulling ONOS-SONA docker image at ${!oc_name}..."
-    ssh sdn@${!oc_name} "sudo docker pull opensona/onos-sona-nightly-docker"
+    ssh sdn@"${!oc_name}" "sudo docker pull opensona/onos-sona-nightly-docker"
 
+    # shellcheck disable=SC2086
     if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -f name=onos')" ]; then
         echo "Wiping out existing ONOS-SONA container at ${!oc_name}..."
-        ssh sdn@${!oc_name} "sudo docker stop onos || true" > /dev/null
-        ssh sdn@${!oc_name} "sudo docker rm onos || true" > /dev/null
+        ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
+        ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null
     fi
 }
 
@@ -59,24 +66,25 @@ rm -rf /tmp/cluster.json
 ips=""
 if [ -z "$OC_IPS" ]
 then
-    for ((i=0; i < $#; i++))
+    for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
-        ips="$ips ${nodes[$i]}"
+        oc_name=${ACCESS_IPS[$i]}
+        ips="$ips ${!oc_name}"
     }
 else
     ips=$OC_IPS
 fi
 
-python onos-gen-partitions /tmp/cluster.json $ips
+python onos-gen-partitions /tmp/cluster.json "$ips"
 
 # copy ONOS configuration files under onos_config directory
 echo "Copying ONOS configs..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@${!oc_name} "rm -rf ~/onos_config"
-    ssh sdn@${!oc_name} "mkdir -p ~/onos_config"
-    scp /tmp/cluster.json sdn@${!oc_name}:~/onos_config
+    ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
+    ssh sdn@"${!oc_name}" "mkdir -p ~/onos_config"
+    scp /tmp/cluster.json sdn@"${!oc_name}":~/onos_config
 }
 
 # start ONOS-SONA container
@@ -84,8 +92,8 @@ echo "Launching ONOS cluster..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@${!oc_name} "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/onos-sona-nightly-docker"
-    ssh sdn@${!oc_name} "sudo docker ps"
+    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/onos-sona-nightly-docker"
+    ssh sdn@"${!oc_name}" "sudo docker ps"
 }
 
 echo "Done!"
