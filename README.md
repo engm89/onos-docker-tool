@@ -1,8 +1,8 @@
-# Toolset for Managing ONOS Container Cluster
+# Management Tools of Container-based ONOS Cluster (MTCO)
 
-This project contains a set of tools which are used for managing a container based ONOS cluster. We assume that the users have configured at least one linux node (remote machine) for running a docker container. Also the local machine where we run this toolset, has privilege to access to the remote machine through SSH tunnel without providing the password. To achieve this, the users need to 1) pre-create an user named "sdn" at all remote machines; 2) distribute a public RSA key from the local machine to all remote machines. With this setup, the local machine does not need to provide any password when it accesses to the remote machines.
+The MTCO contains a set of tools for managing a container based ONOS cluster. We assume that the users have configured at least one linux node (remote machine) which is capable for running a docker container. Also the local machine where we run the MTCO has privilege to access to the remote machine through SSH tunnel without providing the password. To achieve this, the users need to 1) pre-create an user named "sdn" at all remote machines; 2) distribute a public RSA key from the local machine to all remote machines. With this setup, the local machine does not need to provide any password when it accesses to the remote machines.
 
-To run the provided toolset, the local machine should be installed python, git, and ssh related utilities (e.g., ssh-keygen, ssh-copy-id, etc.)
+To run MTCO, the local machine should be installed `python`, `git`, and ssh related softwares such as `ssh-keygen`, `ssh-copy-id`, etc. Since the user may use any UNIX-based OS, therefore the installation instruction of prerequisite softwares will be varied, we will not provide the detailed installation instruction on those softwares.
 
 1. Download this toolset.
 ```
