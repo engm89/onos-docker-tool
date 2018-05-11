@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sonaproject/onos-docker-tool.svg?branch=master)](https://travis-ci.org/sonaproject/onos-docker-tool)
+
 # Management Tools of Container-based ONOS Cluster (MTCO)
 
 The MTCO contains a set of tools for managing a container based ONOS cluster. We assume that the users have configured at least one linux node (remote machine) which is capable for running a docker container. Also the local machine where we run the MTCO has privilege to access to the remote machine through SSH tunnel without providing the password. To achieve this, the users need to 1) pre-create an user named "sdn" at all remote machines; 2) distribute a public RSA key from the local machine to all remote machines. With this setup, the local machine does not need to provide any password when it accesses to the remote machines.
