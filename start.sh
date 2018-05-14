@@ -69,7 +69,12 @@ then
     for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
         oc_name=${ACCESS_IPS[$i]}
-        ips="$ips ${!oc_name}"
+        if [ $i -eq 0 ] 
+        then 
+            ips="${!oc_name}"
+        else
+            ips="$ips ${!oc_name}"
+        fi
     }
 else
     ips=$OC_IPS
