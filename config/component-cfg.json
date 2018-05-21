@@ -1,0 +1,19 @@
+{
+    "org.onosproject.openstacknetworking.impl.OpenstackSwitchingArpHandler": {
+        "arpMode": "proxy",
+        "gatewayMac": "fe:00:00:00:00:02"
+    },
+    "org.onosproject.openstacknetworking.impl.OpenstackSwitchingDhcpHandler": {
+        "dhcpServerMac": "fe:00:00:00:00:02",
+        "dhcpDataMtu": 1450
+    },
+    "org.onosproject.openstacknetworking.impl.OpenstackRoutingHandler": {
+        "useStatefulSnat": false
+    },
+    "org.onosproject.openstacknetworking.impl.OpenstackSecurityGroupHandler": {
+        "useSecurityGroup": false
+    },
+    "org.onosproject.openstacknode.impl.DefaultOpenstackNodeHandler": {
+        "ovsdbPort": 6640
+    }
+}

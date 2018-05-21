@@ -89,7 +89,11 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
     ssh sdn@"${!oc_name}" "mkdir -p ~/onos_config"
+    
+    # copy cluster.json config file
     scp /tmp/cluster.json sdn@"${!oc_name}":~/onos_config
+    # copy other config files
+    scp config/* sdn@"${!oc_name}":~/onos_config
 }
 
 # start ONOS-SONA container
