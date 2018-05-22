@@ -22,4 +22,3 @@ _EOF_
 [ -n "$1" ] && OCI=$OC1 && shift
 
 sshpass -pkaraf ssh -p 8101 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null karaf@$OCI "$@"
-

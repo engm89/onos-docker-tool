@@ -1,26 +1,28 @@
 #!/bin/bash
+# -----------------------------------------------------------------------------
+# ONOS container provisioning shell script.
+# -----------------------------------------------------------------------------
 
-STALE_ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
-# shellcheck disable=SC2206
-STALE_ACCESS_IPS=($STALE_ENV_VAR)
+function _usage () {
+cat << _EOF_
+usage: $(basename $0)
 
-for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
-{
-    oc_name=${STALE_ACCESS_IPS[$i]}
-    unset "$oc_name"
+ONOS container provisioning shell script.
+
+The shell script will refer to environment variables defined in bash_profile to
+provision ONOS containers.
+
+_EOF_
 }
-unset OC_IPS
 
-# shellcheck disable=SC1091
-source bash_profile
+[ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
 
-ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
-# shellcheck disable=SC2206
-ACCESS_IPS=($ENV_VAR)
+source envSetup
 OC_IPS_ALT=""
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
-    echo "No ONOS Controller IP addresses were configured! Please configure IP address in bash_profile."
+    echo "No ONOS Controller IP addresses were configured!"
+    echo "Please configure IP address in bash_profile."
     exit 1
 fi
 
@@ -34,11 +36,13 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 
 if [ -z "$OC_IPS" ]
 then
-    echo "ONOS Cluster IP addresses were NOT configured! Following IP address will be used to form an ONOS cluster."
+    echo "ONOS Cluster IP addresses were NOT configured!"
+    echo "Following IP address will be used to form an ONOS cluster."
     echo "$OC_IPS_ALT"
 
 else
-    echo "ONOS Cluster IP addresses were configured! Following IP address will be used to form an ONOS cluster."
+    echo "ONOS Cluster IP addresses were configured!"
+    echo "Following IP address will be used to form an ONOS cluster."
     echo "$OC_IPS"
 fi
 
@@ -69,8 +73,8 @@ then
     for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
         oc_name=${ACCESS_IPS[$i]}
-        if [ $i -eq 0 ] 
-        then 
+        if [ $i -eq 0 ]
+        then
             ips="${!oc_name}"
         else
             ips="$ips ${!oc_name}"
@@ -89,7 +93,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
     ssh sdn@"${!oc_name}" "mkdir -p ~/onos_config"
-    
+
     # copy cluster.json config file
     scp /tmp/cluster.json sdn@"${!oc_name}":~/onos_config
     # copy other config files

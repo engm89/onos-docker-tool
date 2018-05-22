@@ -1,25 +1,27 @@
 #!/bin/bash
+# -----------------------------------------------------------------------------
+# ONOS container removal shell script.
+# -----------------------------------------------------------------------------
 
-STALE_ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
-# shellcheck disable=SC2206
-STALE_ACCESS_IPS=($STALE_ENV_VAR)
+function _usage () {
+cat << _EOF_
+usage: $(basename $0)
 
-for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
-{
-    oc_name=${STALE_ACCESS_IPS[$i]}
-    unset "$oc_name"
+ONOS container removal shell script.
+
+The shell script will refer to environment variables defined in bash_profile to
+provision ONOS containers.
+
+_EOF_
 }
-unset OC_IPS
 
-# shellcheck disable=SC1091
-source bash_profile
+[ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
 
-ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
-# shellcheck disable=SC2206
-ACCESS_IPS=($ENV_VAR)
+source envSetup
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
-    echo "No ONOS Controller IP addresses were configured! Please configure IP address in bash_profile."
+    echo "No ONOS Controller IP addresses were configured!"
+    echo "Please configure IP address in bash_profile."
     exit 1
 fi
 
