@@ -31,7 +31,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
 
     # shellcheck disable=SC2086
-    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -f name=onos')" ]; then
+    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
         echo "Wiping out the ONOS-SONA container at ${!oc_name}..."
         ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
         ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null

@@ -53,7 +53,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     ssh sdn@"${!oc_name}" "sudo docker pull opensona/onos-sona-nightly-docker"
 
     # shellcheck disable=SC2086
-    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -f name=onos')" ]; then
+    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
         echo "Wiping out existing ONOS-SONA container at ${!oc_name}..."
         ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
         ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null
