@@ -5,7 +5,7 @@
 
 function _usage () {
 cat << _EOF_
-usage: $(basename $0)
+usage: $(basename "$0")
 
 ONOS container removal shell script.
 
@@ -15,8 +15,9 @@ provision ONOS containers.
 _EOF_
 }
 
-[ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
+[ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
+# shellcheck disable=SC1091
 source envSetup
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then

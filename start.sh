@@ -5,7 +5,7 @@
 
 function _usage () {
 cat << _EOF_
-usage: $(basename $0)
+usage: $(basename "$0")
 
 ONOS container provisioning shell script.
 
@@ -15,8 +15,9 @@ provision ONOS containers.
 _EOF_
 }
 
-[ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
+[ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
+# shellcheck disable=SC1091
 source envSetup
 OC_IPS_ALT=""
 
@@ -84,7 +85,7 @@ else
     ips=$OC_IPS
 fi
 
-python onos-gen-partitions /tmp/cluster.json "$ips"
+python bin/onos-gen-partitions /tmp/cluster.json "$ips"
 
 # copy ONOS configuration files under onos_config directory
 echo "Copying ONOS configs..."
