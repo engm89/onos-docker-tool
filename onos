@@ -1,0 +1,25 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# ONOS remote command-line client.
+# -----------------------------------------------------------------------------
+
+function _usage () {
+cat << _EOF_
+usage: $(basename $0) [node [command]]
+
+ONOS remote command-line client.
+
+Parameters:
+  - node          ip or hostname of cluster node to attach to
+  - command       command to be executed
+
+If node is unspecified, the value of \$OC1 environment variable is used.
+_EOF_
+}
+
+[ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
+
+[ -n "$1" ] && OCI=$OC1 && shift
+
+sshpass -pkaraf ssh -p 8101 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null karaf@$OCI "$@"
+
