@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STALE_ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
+STALE_ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
 # shellcheck disable=SC2206
 STALE_ACCESS_IPS=($STALE_ENV_VAR)
 
@@ -14,6 +14,6 @@ unset OC_IPS
 # shellcheck disable=SC1091
 source bash_profile
 
-ENV_VAR=$(env | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
+ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
 # shellcheck disable=SC2206
 ACCESS_IPS=($ENV_VAR)

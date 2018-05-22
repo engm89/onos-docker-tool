@@ -85,7 +85,8 @@ else
     ips=$OC_IPS
 fi
 
-python bin/onos-gen-partitions /tmp/cluster.json "$ips"
+# shellcheck disable=SC2068
+python bin/onos-gen-partitions /tmp/cluster.json $ips
 
 # copy ONOS configuration files under onos_config directory
 echo "Copying ONOS configs..."
