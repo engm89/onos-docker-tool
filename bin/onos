@@ -19,6 +19,9 @@ _EOF_
 
 [ "$1" = "-h" -o "$1" = '-?' ] && _usage && exit 0
 
+# shellcheck disable=SC1091
+source envSetup
+
 OCI=$OC1
 [ -n "$1" ] && OCI=$1 && shift
 
