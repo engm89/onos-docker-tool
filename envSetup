@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 STALE_ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
 # shellcheck disable=SC2206
 STALE_ACCESS_IPS=($STALE_ENV_VAR)
@@ -12,7 +14,7 @@ for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
 unset OC_IPS
 
 # shellcheck disable=SC1091
-source bash_profile
+source $DIR/bash_profile
 
 ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^OC[0-9]$")
 # shellcheck disable=SC2206
