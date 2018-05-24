@@ -3,6 +3,9 @@
         "arpMode": "proxy",
         "gatewayMac": "fe:00:00:00:00:02"
     },
+    "org.onosproject.openstacknetworking.impl.OpenstackRoutingArpHandler": {
+        "arpMode": "proxy"
+    },
     "org.onosproject.openstacknetworking.impl.OpenstackSwitchingDhcpHandler": {
         "dhcpServerMac": "fe:00:00:00:00:02",
         "dhcpDataMtu": 1450
