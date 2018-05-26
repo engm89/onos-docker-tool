@@ -86,7 +86,7 @@ else
 fi
 
 # shellcheck disable=SC2086
-python bin/onos-gen-partitions /tmp/cluster.json $ips
+python asset/onos-gen-partitions /tmp/cluster.json $ips
 
 # copy ONOS configuration files under onos_config directory
 echo "Copying ONOS configs..."
