@@ -2,6 +2,10 @@
 # ONOS-SONA docker container deployer BASH profile conveniences
 # Simply include in your own .bash_aliases or .bash_profile
 
+if [ -z ${ONOS_DOCKER} ]; then
+  ONOS_DOCKER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+
 # Root of the ONOS DOCKER TOOL source tree
 export ONOS_DOCKER=${ONOS_DOCKER:-~/onos-docker-tool}
 
