@@ -29,9 +29,10 @@ remote=sdn@${OCI}
 LOG=$DOCKER_KARAF_LOG
 
 ssh -t $remote "sudo docker exec -it onos /bin/bash -c '
+source ~/.bash_profile
 while true; do
     echo ==================================================================
     [ ! -f $LOG ] && sleep 2 && continue
-    tail -n 512 -f -F $LOG || tail -n 512 -s 2
+    tail -n 512 -f -F $LOG | awkcolor
 done
 '"
