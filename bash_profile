@@ -2,6 +2,7 @@
 # ONOS-SONA docker container deployer BASH profile conveniences
 # Simply include in your own .bash_aliases or .bash_profile
 
+unset ONOS_DOCKER
 if [ -z ${ONOS_DOCKER} ]; then
   ONOS_DOCKER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 fi
@@ -19,6 +20,7 @@ export PATH="$PATH:$ONOS_DOCKER/bin"
 # Short-hand for ONOS DOCKER CMD
 alias od='onos-docker'
 alias odl='onos-docker-log'
+alias odc='onos-docker-cell'
 
 # Setup docker-cell enviroment
 export ONOS_DOCKER_CELL_DIR=$ONOS_DOCKER/cell

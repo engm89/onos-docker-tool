@@ -1,0 +1,47 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# A cell tool which configures the ONOS container cell environment variables.
+# -----------------------------------------------------------------------------
+
+function _usage () {
+cat << _EOF_
+usage: $(basename $0) [cell_name]
+
+ONOS contailer cell configrator.
+
+Parameters:
+  - cell_name          cell name of the targeted site
+
+If cell_name is not configured, default value will be used instead.
+_EOF_
+}
+
+function _not_found () {
+cat << _EOF_
+Specified cell file was not found under cell directory. Please create one first.
+_EOF_
+}
+
+[ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
+
+# shellcheck disable=SC1091
+source $ONOS_DOCKER/envSetup
+
+if [ -f $ONOS_DOCKER/cell/$1 ]
+then
+  ONOS_DOCKER_CELL=$1
+else
+  echo "$ONOS_DOCKER/cell/$1"
+  ONOS_DOCKER_CELL=default
+  _not_found && exit 0
+fi
+
+source $ONOS_DOCKER/cell/$1
+
+echo "Following ENV variable will be used for cell $1"
+for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+{
+    oc_name=${ACCESS_IPS[$i]}
+    OC_IPS_ALT="$OC_IPS_ALT ${!oc_name}"
+    echo "$oc_name = ${!oc_name}"
+}
