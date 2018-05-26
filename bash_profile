@@ -16,11 +16,8 @@ export PATH="$PATH:$ONOS_DOCKER/bin"
 alias od='onos-docker'
 alias odl='onos-docker-log'
 
-export OC1=192.168.56.101
-#export OC2=192.168.56.102
-#export OC3=192.168.56.103
+# Setup docker-cell enviroment
+export ONOS_DOCKER_CELL_DIR=$ONOS_DOCKER/cell
+export ONOS_DOCKER_DEFAULT_CELL=${ONOS_DOCKER_DEFAULT_CELL:-default}
 
-# If you need to use private IP address to form an ONOS cluster,
-# please configure OC_IPS using private IP addresses.
-# If OC_IPS is not configured, OC1 ... OCN will be used instead.
-#export OC_IPS="192.168.56.101 192.168.56.102 192.168.56.103"
+source $ONOS_DOCKER_CELL_DIR/$ONOS_DOCKER_DEFAULT_CELL
