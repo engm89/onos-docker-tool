@@ -22,6 +22,6 @@ alias odl='onos-docker-log'
 
 # Setup docker-cell enviroment
 export ONOS_DOCKER_CELL_DIR=$ONOS_DOCKER/cell
-export ONOS_DOCKER_DEFAULT_CELL=${ONOS_DOCKER_DEFAULT_CELL:-default}
+export ONOS_DOCKER_CELL=${ONOS_DOCKER_CELL:-default}
 
-source $ONOS_DOCKER_CELL_DIR/$ONOS_DOCKER_DEFAULT_CELL
+source $ONOS_DOCKER_CELL_DIR/$ONOS_DOCKER_CELL
