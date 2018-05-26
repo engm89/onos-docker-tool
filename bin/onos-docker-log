@@ -19,14 +19,14 @@ _EOF_
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
 # shellcheck disable=SC1091
-source ../envSetup
+source $ONOS_DOCKER/envSetup
 
 OCI=$OC1
 [ -n "$1" ] && OCI=$1 && shift
 
 remote=sdn@${OCI}
 
-LOG=/root/onos/apache-karaf-3.0.8/data/log/karaf.log
+LOG=$DOCKER_KARAF_LOG
 
 ssh -t $remote "sudo docker exec -it onos /bin/bash -c '
 while true; do
