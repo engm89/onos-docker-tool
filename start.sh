@@ -19,7 +19,7 @@ _EOF_
 
 # shellcheck disable=SC1091
 source envSetup
-OC_IPS_ALT=""
+ODC_IPS_ALT=""
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
     echo "No ONOS Controller IP addresses were configured!"
@@ -31,20 +31,20 @@ echo "Following IP addresses will be used to spawn ONOS containers."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    OC_IPS_ALT="$OC_IPS_ALT ${!oc_name}"
+    ODC_IPS_ALT="$ODC_IPS_ALT ${!oc_name}"
     echo "$oc_name = ${!oc_name}"
 }
 
-if [ -z "$OC_IPS" ]
+if [ -z "$ODC_IPS" ]
 then
     echo "ONOS Cluster IP addresses were NOT configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$OC_IPS_ALT"
+    echo "$ODC_IPS_ALT"
 
 else
     echo "ONOS Cluster IP addresses were configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$OC_IPS"
+    echo "$ODC_IPS"
 fi
 
 # start pull ONOS-SONA docker image, stop & remove ONOS-SONA container
@@ -69,7 +69,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 echo "Generating cluster.json..."
 rm -rf /tmp/cluster.json
 ips=""
-if [ -z "$OC_IPS" ]
+if [ -z "$ODC_IPS" ]
 then
     for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
@@ -82,7 +82,7 @@ then
         fi
     }
 else
-    ips=$OC_IPS
+    ips=$ODC_IPS
 fi
 
 # shellcheck disable=SC2086

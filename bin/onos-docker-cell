@@ -24,9 +24,6 @@ _EOF_
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
-# shellcheck disable=SC1091
-source $ONOS_DOCKER/envSetup
-
 if [ -f $ONOS_DOCKER/cell/$1 ]
 then
   ONOS_DOCKER_CELL=$1
@@ -36,7 +33,8 @@ else
   _not_found && exit 0
 fi
 
-source $ONOS_DOCKER/cell/$1
+# shellcheck disable=SC1091
+source $ONOS_DOCKER/envSetup
 
 echo "Following ENV variable will be used for cell $1"
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
