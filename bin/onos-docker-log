@@ -33,6 +33,6 @@ source ~/.bash_profile
 while true; do
     echo ==================================================================
     [ ! -f $LOG ] && sleep 2 && continue
-    tail -n 512 -f -F $LOG | awkcolor
+    tail -n 512 -f -F $LOG | awkcolor || tail -n 512
 done
 '"
