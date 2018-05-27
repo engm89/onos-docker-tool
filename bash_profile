@@ -33,6 +33,11 @@ function onos-docker-site {
   if [ -z $1 ]
   then
     export ONOS_DOCKER_SITE=${ONOS_DOCKER_SITE:-default}
+    if [ ! -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE ]
+    then
+      echo "Site $ONOS_DOCKER_SITE does not exist. Use default instead..."
+      export ONOS_DOCKER_SITE=default
+    fi
   else
     if [ -f $ONOS_DOCKER_SITE_ROOT/$1/$ONOS_DOCKER_CELL_FILE ]
     then
