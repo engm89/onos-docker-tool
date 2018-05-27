@@ -57,7 +57,7 @@ function onos-docker-site {
   # shellcheck disable=SC2206
   ACCESS_IPS=($ENV_VAR)
 
-  echo "Following cell variables will be used..."
+  echo "== Cell variables =="
   for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
   {
       oc_name=${ACCESS_IPS[$i]}
@@ -67,8 +67,18 @@ function onos-docker-site {
   COMPONENT_CONFIG_FILE=component-cfg.json
   if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE ]
   then
+    echo "== component-cfg.json =="
     cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE
   else
     echo "No component-cfg.json file. Will use default config variables..."
+  fi
+
+  NETWORK_CONFIG_FILE=network-cfg.json
+  if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE ]
+  then
+    echo "== network-cfg.json =="
+    cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE
+  else
+    echo "No network-cfg.json file. Will use default config variables..."
   fi
 }
