@@ -20,35 +20,56 @@ export PATH="$PATH:$ONOS_DOCKER/bin"
 # Short-hand for ONOS DOCKER CMD
 alias od='onos-docker'
 alias odl='onos-docker-log'
-alias odc='onos-docker-cell'
+alias ods='onos-docker-site'
 
-# Setup docker-cell enviroment
-export ONOS_DOCKER_CELL_DIR=$ONOS_DOCKER/cell
-export ONOS_DOCKER_CELL=${ONOS_DOCKER_CELL:-default}
+# Setup docker-site enviroment
+export ONOS_DOCKER_SITE_ROOT=$ONOS_DOCKER/site
+export ONOS_DOCKER_SITE=${ONOS_DOCKER_SITE:-default}
+export ONOS_DOCKER_CELL_FILE=cell
 
-source $ONOS_DOCKER_CELL_DIR/$ONOS_DOCKER_CELL
+source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
-function onos-docker-cell {
-  unset ONOS_DOCKER_CELL
-  if [ -f $ONOS_DOCKER/cell/$1 ]
+function onos-docker-site {
+  if [ -z $1 ]
   then
-    export ONOS_DOCKER_CELL=$1
+    export ONOS_DOCKER_SITE=${ONOS_DOCKER_SITE:-default}
   else
-    echo "Please specify a valid cell! Cell file should be located under cell DIR."
-    echo "default cell will be used..."
-    export ONOS_DOCKER_CELL=default
+    if [ -f $ONOS_DOCKER_SITE_ROOT/$1/$ONOS_DOCKER_CELL_FILE ]
+    then
+      export ONOS_DOCKER_SITE=$1
+    else
+      echo "Please specify a valid site! Site should be located under site directory."
+      echo "The default site profile will be used instead."
+      export ONOS_DOCKER_SITE=default
+    fi
   fi
 
-  source $ONOS_DOCKER/cell/$ONOS_DOCKER_CELL
+  source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
   ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
   # shellcheck disable=SC2206
   ACCESS_IPS=($ENV_VAR)
 
-  echo "Following ENV variable will be used for cell $1"
+  echo "Following cell variables will be used for site $ONOS_DOCKER_SITE"
   for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
   {
       oc_name=${ACCESS_IPS[$i]}
       echo "$oc_name = ${!oc_name}"
   }
+
+  COMPONENT_CONFIG_FILE=component-cfg.json
+  if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE ]
+  then
+    cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE
+  else
+    echo "No component-cfg.json file."
+  fi
+
+  NETWORK_CONFIG_FILE=network-cfg.json
+  if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE ]
+  then
+    cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE
+  else
+    echo "No network-cfg.json file."
+  fi
 }
