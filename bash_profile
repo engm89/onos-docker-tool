@@ -46,11 +46,13 @@ function onos-docker-site {
 
   source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
+  echo "Site Name: $ONOS_DOCKER_SITE"
+
   ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
   # shellcheck disable=SC2206
   ACCESS_IPS=($ENV_VAR)
 
-  echo "Following cell variables will be used for site $ONOS_DOCKER_SITE"
+  echo "Following cell variables will be used..."
   for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
   {
       oc_name=${ACCESS_IPS[$i]}
@@ -62,14 +64,6 @@ function onos-docker-site {
   then
     cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE
   else
-    echo "No component-cfg.json file."
-  fi
-
-  NETWORK_CONFIG_FILE=network-cfg.json
-  if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE ]
-  then
-    cat $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$NETWORK_CONFIG_FILE
-  else
-    echo "No network-cfg.json file."
+    echo "No component-cfg.json file. Will use default config variables..."
   fi
 }
