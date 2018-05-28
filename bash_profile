@@ -75,6 +75,11 @@ function onos-docker-site {
       echo "$oc_name = ${!oc_name}"
   }
 
+  if [ ! -z "$ODC_IPS" ]
+  then
+    echo "ODC_IPS = $ODC_IPS"
+  fi
+
   COMPONENT_CONFIG_FILE=component-cfg.json
   if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE ]
   then

@@ -99,8 +99,11 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     # copy cluster.json config file
     scp /tmp/cluster.json sdn@"${!oc_name}":~/onos_config
 
-    # copy component-config file
-    scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json sdn@"${!oc_name}":~/onos_config
+    # copy component-config file if it exists
+    if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json ]
+    then
+      scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json sdn@"${!oc_name}":~/onos_config
+    fi
 }
 
 # start ONOS-SONA container
