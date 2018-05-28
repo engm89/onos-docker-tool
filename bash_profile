@@ -49,9 +49,20 @@ function onos-docker-site {
     fi
   fi
 
-  source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
-
   echo "Site Name: $ONOS_DOCKER_SITE"
+
+  STALE_ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+  # shellcheck disable=SC2206
+  STALE_ACCESS_IPS=($STALE_ENV_VAR)
+
+  for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
+  {
+      odc_name=${STALE_ACCESS_IPS[$i]}
+      unset "$odc_name"
+  }
+  unset ODC_IPS
+
+  source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
   ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
   # shellcheck disable=SC2206
