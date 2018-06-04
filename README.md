@@ -23,23 +23,17 @@ $ git clone https://github.com/sonaproject/onos-docker-tool.git
 $ ssh-keygen -t rsa
 ```
 
-4. Open bash_profile and configure the remote machines's IP addresses. Note that those IP addresses should be accessable from the local machine. Please add or remove IPs to fulfill your requirement.
+4. Create the site profile which contains cell and a set of ONOS configuration files. A cell is similar to ONOS cell which includes a set of environment variables such as ODC1 ~ ODCX, ODC_IPS, etc. Those variables will be referred from MTCO for container provision and teardown. All profile should be located under `site` directory with its own name. By default, we provide a profile named `default`. Please refer to default to create your own site profile. After done all site profile creation, please apply the profile by issuing following commands.
 ```
-export OC1=192.168.56.101
-export OC2=192.168.56.102
-export OC3=192.168.56.103
+$ onos-docker-site profile_name
 ```
-
-In case you need to assign internally accessable IP addresses (which are not accessable from the local machine) to form an ONOS cluster, please configure an OC_IPS variable. Otherwise, this toolset will use the publically accessable IP addresses (e.g., OC1 ~ OCN) to form an ONOS cluster.
-```
-export OC_IPS="10.10.10.101 10.10.10.102 10.10.10.103"
-```
+`onos-docker-site` can be further simplified with `ods`.
 
 5. Distribute the public RSA key to all remote machines.
 ```
-$ ssh-copy-id sdn@$OC1
-$ ssh-copy-id sdn@$OC2
-$ ssh-copy-id sdn@$OC3
+$ ssh-copy-id sdn@$ODC1
+$ ssh-copy-id sdn@$ODC2
+$ ssh-copy-id sdn@$ODC3
 ...
 ```
 
@@ -48,7 +42,24 @@ $ ssh-copy-id sdn@$OC3
 $ ./start.sh
 ```
 
-7. Stop and remove the ONOS containers from all the remote machines.
+7. Push `network-cfg.json` to one of the ONOS nodes.
+```
+$ ./push-cfg.sh profile_name
+```
+
+8. Access to ONOS shell.
+```
+$ onos-docker $ODC1
+```
+Note that, `onos-docker` can be further simplified with `od`. In order to use `onos-docker` command, please install `sshpass` utility first.
+
+9. View ONOS log.
+```
+$ onos-docker-log $ODC1
+```
+Note that, `onos-docker-log` can be further simplified with `odl`. `odl` does NOT stand for `opendaylight` :)
+
+10. Stop and remove the ONOS containers from all the remote machines.
 ```
 $ ./stop.sh
 ```
