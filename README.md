@@ -29,7 +29,12 @@ $ onos-docker-site profile_name
 ```
 `onos-docker-site` can be further simplified with `ods`.
 
-5. Distribute the public RSA key to all remote machines.
+5. Apply the environment variables by sourcing `bash_profile`. If the user wants to apply the variables for each login, he/she needs to put following content into `.bash_profile` under user directory.
+```
+. ~/path-to-onos-docker-tool/bash_profile
+```
+
+6. Distribute the public RSA key to all remote machines.
 ```
 $ ssh-copy-id sdn@$ODC1
 $ ssh-copy-id sdn@$ODC2
@@ -37,30 +42,30 @@ $ ssh-copy-id sdn@$ODC3
 ...
 ```
 
-6. Provision and launch the ONOS container(s) at the remote machines.
+7. Provision and launch the ONOS container(s) at the remote machines.
 ```
 $ ./start.sh
 ```
 
-7. Push `network-cfg.json` to one of the ONOS nodes.
+8. Push `network-cfg.json` to one of the ONOS nodes.
 ```
 $ ./push-cfg.sh
 ```
 
-8. Access to ONOS shell.
+9. Access to ONOS shell.
 ```
 $ onos-docker $ODC1
 ```
 Note that, `onos-docker` can be further simplified with `od`. In order to use `onos-docker` command, please install `sshpass` utility first.
 The following link describes how to install `sshpass`. https://gist.github.com/arunoda/7790979
 
-9. View ONOS log.
+10. View ONOS log.
 ```
 $ onos-docker-log $ODC1
 ```
 Note that, `onos-docker-log` can be further simplified with `odl`. `odl` does NOT stand for `opendaylight` :)
 
-10. Stop and remove the ONOS containers from all the remote machines.
+11. Stop and remove the ONOS containers from all the remote machines.
 ```
 $ ./stop.sh
 ```
