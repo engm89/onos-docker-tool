@@ -44,7 +44,7 @@ $ ./start.sh
 
 7. Push `network-cfg.json` to one of the ONOS nodes.
 ```
-$ ./push-cfg.sh profile_name
+$ ./push-cfg.sh
 ```
 
 8. Access to ONOS shell.
@@ -52,6 +52,7 @@ $ ./push-cfg.sh profile_name
 $ onos-docker $ODC1
 ```
 Note that, `onos-docker` can be further simplified with `od`. In order to use `onos-docker` command, please install `sshpass` utility first.
+The following link describes how to install `sshpass`. https://gist.github.com/arunoda/7790979
 
 9. View ONOS log.
 ```
