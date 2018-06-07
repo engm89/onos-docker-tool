@@ -23,16 +23,16 @@ $ git clone https://github.com/sonaproject/onos-docker-tool.git
 $ ssh-keygen -t rsa
 ```
 
-4. Create the site profile which contains cell and a set of ONOS configuration files. A cell is similar to ONOS cell which includes a set of environment variables such as ODC1 ~ ODCX, ODC_IPS, etc. Those variables will be referred from MTCO for container provision and teardown. All profile should be located under `site` directory with its own name. By default, we provide a profile named `default`. Please refer to default to create your own site profile. After done all site profile creation, please apply the profile by issuing following commands.
+4. Apply the environment variables by sourcing `bash_profile`. If the user wants to apply the variables for each login, he/she needs to put following content into `.bash_profile` under user directory.
+```
+. ~/path-to-onos-docker-tool/bash_profile
+```
+
+5. Create the site profile which contains cell and a set of ONOS configuration files. A cell is similar to ONOS cell which includes a set of environment variables such as ODC1 ~ ODCX, ODC_IPS, etc. Those variables will be referred from MTCO for container provision and teardown. All profile should be located under `site` directory with its own name. By default, we provide a profile named `default`. Please refer to default to create your own site profile. After done all site profile creation, please apply the profile by issuing following commands.
 ```
 $ onos-docker-site profile_name
 ```
 `onos-docker-site` can be further simplified with `ods`.
-
-5. Apply the environment variables by sourcing `bash_profile`. If the user wants to apply the variables for each login, he/she needs to put following content into `.bash_profile` under user directory.
-```
-. ~/path-to-onos-docker-tool/bash_profile
-```
 
 6. Distribute the public RSA key to all remote machines.
 ```
