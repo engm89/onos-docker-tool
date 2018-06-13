@@ -15,7 +15,18 @@ provision ONOS containers.
 _EOF_
 }
 
+REPO_NAME="onos-sona-nightly-docker"
+
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
+
+if [ "$1" = "-l" ]; then
+  REPO_NAME="onos-sona-nightly-light-docker"
+elif [ "$1" = "-r" ]; then
+  REPO_NAME="onos-sona-review-docker"
+else
+  REPO_NAME="onos-sona-nightly-docker"
+fi
+  #statements
 
 # shellcheck disable=SC1091
 source envSetup
@@ -55,7 +66,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
 
     echo "Pulling ONOS-SONA docker image at ${!oc_name}..."
-    ssh sdn@"${!oc_name}" "sudo docker pull opensona/onos-sona-nightly-docker"
+    ssh sdn@"${!oc_name}" "sudo docker pull opensona/$REPO_NAME"
 
     # shellcheck disable=SC2086
     if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
@@ -111,7 +122,7 @@ echo "Launching ONOS cluster..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/onos-sona-nightly-docker"
+    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/$REPO_NAME"
     ssh sdn@"${!oc_name}" "sudo docker ps"
 }
 
