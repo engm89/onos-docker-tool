@@ -5,7 +5,13 @@
 
 function _usage () {
 cat << _EOF_
-usage: $(basename "$0")
+usage: $(basename "$0") [OPTION] [VERSION]
+
+OPTION:
+  -l light
+
+VERSION:
+  ONOS version
 
 ONOS container provisioning shell script.
 
@@ -15,18 +21,25 @@ provision ONOS containers.
 _EOF_
 }
 
+REPO_PATH="opensona"
 REPO_NAME="onos-sona-nightly-docker"
+REPO_TAG="latest"
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
-if [ "$1" = "-l" ]; then
-  REPO_NAME="onos-sona-nightly-light-docker"
-elif [ "$1" = "-r" ]; then
-  REPO_NAME="onos-sona-review-docker"
+if [ -z ${1} ]; then
+  REPO_TAG="latest"
+elif [ "$1" = "-l" ]; then
+  if [ -z ${2} ]; then
+    REPO_TAG="light"
+  else
+    REPO_TAG="$2-light"
+  fi
 else
-  REPO_NAME="onos-sona-nightly-docker"
+  REPO_TAG="$1"
 fi
-  #statements
+
+echo $REPO_TAG
 
 # shellcheck disable=SC1091
 source envSetup
@@ -66,7 +79,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     oc_name=${ACCESS_IPS[$i]}
 
     echo "Pulling ONOS-SONA docker image at ${!oc_name}..."
-    ssh sdn@"${!oc_name}" "sudo docker pull opensona/$REPO_NAME"
+    ssh sdn@"${!oc_name}" "sudo docker pull $REPO_PATH/$REPO_NAME:$REPO_TAG"
 
     # shellcheck disable=SC2086
     if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
@@ -122,7 +135,7 @@ echo "Launching ONOS cluster..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config opensona/$REPO_NAME"
+    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$REPO_NAME:$REPO_TAG"
     ssh sdn@"${!oc_name}" "sudo docker ps"
 }
 
