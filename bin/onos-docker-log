@@ -21,10 +21,10 @@ _EOF_
 # shellcheck disable=SC1091
 source $ONOS_DOCKER/envSetup
 
-OCI=$OC1
-[ -n "$1" ] && OCI=$1 && shift
+ODCI=$ODC1
+[ -n "$1" ] && ODCI=$1 && shift
 
-remote=sdn@${OCI}
+remote=sdn@${ODCI}
 
 LOG=$DOCKER_KARAF_LOG
 
