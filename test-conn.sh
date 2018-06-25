@@ -20,5 +20,5 @@ _EOF_
 # shellcheck disable=SC1091
 source envSetup
 
-ipList=`curl -s --user onos:rocks -X GET http://$OC1:8181/onos/openstacknetworking/management/floatingips/mapped`
+ipList=`curl -s --user onos:rocks -X GET http://$ODC1:8181/onos/openstacknetworking/management/floatingips/mapped`
 python asset/ping-test $ipList
