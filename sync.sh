@@ -21,5 +21,5 @@ _EOF_
 source envSetup
 
 curl --user onos:rocks -X GET http://$ODC1:8181/onos/openstacknetworking/management/sync/states
-curl --user onos:rocks -X GET http://$ODC1:8181/onos/openstacknetworking/management/sync/rules
+curl --user onos:rocks -X GET http://$ODC1:8181/onos/openstacknetworking/management/init/all
 curl --user onos:rocks -X GET http://$ODC1:8181/onos/openstacknetworking/management/sync/rules
