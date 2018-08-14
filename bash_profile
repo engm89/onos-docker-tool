@@ -51,22 +51,31 @@ function onos-docker-site {
 
   echo "Site Name: $ONOS_DOCKER_SITE"
 
-  STALE_ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+  STALE_ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+  STALE_ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
   # shellcheck disable=SC2206
-  STALE_ACCESS_IPS=($STALE_ENV_VAR)
+  STALE_ACCESS_IPS=($STALE_ENV_VAR_1)
+  STALE_PRIVATE_IPS=($STALE_ENV_VAR_2)
 
   for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
   {
       odc_name=${STALE_ACCESS_IPS[$i]}
       unset "$odc_name"
   }
-  unset ODC_IPS
+
+  for ((i=0; i < ${#STALE_PRIVATE_IPS[@]}; i++))
+  {
+      opc_name=${STALE_PRIVATE_IPS[$i]}
+      unset "$opc_name"
+  }
 
   source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
-  ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+  ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+  ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
   # shellcheck disable=SC2206
-  ACCESS_IPS=($ENV_VAR)
+  ACCESS_IPS=($ENV_VAR_1)
+  PRIVATE_IPS=($ENV_VAR_2)
 
   echo "== Cell variables =="
   for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
@@ -75,10 +84,11 @@ function onos-docker-site {
       echo "$oc_name = ${!oc_name}"
   }
 
-  if [ ! -z "$ODC_IPS" ]
-  then
-    echo "ODC_IPS = $ODC_IPS"
-  fi
+  for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+  {
+      op_name=${PRIVATE_IPS[$i]}
+      echo "$op_name = ${!op_name}"
+  }
 
   COMPONENT_CONFIG_FILE=component-cfg.json
   if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE ]

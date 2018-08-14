@@ -30,7 +30,6 @@ echo $REPO_TAG
 
 # shellcheck disable=SC1091
 source envSetup
-ODC_IPS_ALT=""
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
     echo "No ONOS Controller IP addresses were configured!"
@@ -42,20 +41,27 @@ echo "Following IP addresses will be used to spawn ONOS containers."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ODC_IPS_ALT="$ODC_IPS_ALT ${!oc_name}"
     echo "$oc_name = ${!oc_name}"
 }
 
-if [ -z "$ODC_IPS" ]
+if [ ${#PRIVATE_IPS[@]} -eq 0 ]
 then
     echo "ONOS Cluster IP addresses were NOT configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$ODC_IPS_ALT"
+    for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+    {
+        oc_name=${ACCESS_IPS[$i]}
+        echo "$oc_name = ${!oc_name}"
+    }
 
 else
     echo "ONOS Cluster IP addresses were configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$ODC_IPS"
+    for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+    {
+        op_name=${PRIVATE_IPS[$i]}
+        echo "$op_name = ${!op_name}"
+    }
 fi
 
 # start pull ONOS-SONA docker image, stop & remove ONOS-SONA container
@@ -87,7 +93,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 }
 
 ips=""
-if [ -z "$ODC_IPS" ]
+if [ ${#PRIVATE_IPS[@]} -eq 0 ]
 then
     for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
@@ -100,7 +106,16 @@ then
         fi
     }
 else
-    ips=$ODC_IPS
+  for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+  {
+      oc_name=${PRIVATE_IPS[$i]}
+      if [ $i -eq 0 ]
+      then
+          ips="${!oc_name}"
+      else
+          ips="$ips ${!oc_name}"
+      fi
+  }
 fi
 
 echo $ips
@@ -111,6 +126,13 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
 
+    if [ ${#PRIVATE_IPS[@]} -eq 0 ]
+    then
+      op_name=${ACCESS_IPS[$i]}
+    else
+      op_name=${PRIVATE_IPS[$i]}
+    fi
+
     ssh sdn@"${!oc_name}" "rm -rf ~/atomix_config"
     ssh sdn@"${!oc_name}" "mkdir -p ~/atomix_config"
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
@@ -120,14 +142,14 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     echo "Generating atomix.json..."
     ATOMIX_CDEF_FILE=/tmp/"${!oc_name}".atomix.json
     rm -rf $ATOMIX_CDEF_FILE
-    python asset/atomix-gen-config 10.2.1.10 $ATOMIX_CDEF_FILE $ips
+    python asset/atomix-gen-config ${!op_name} $ATOMIX_CDEF_FILE $ips
     scp -q $ATOMIX_CDEF_FILE sdn@"${!oc_name}":~/atomix_config/atomix.json
 
     # generate and inject cluster.json file
     echo "Generating cluster.json..."
     ONOS_CDEF_FILE=/tmp/"${!oc_name}".cluster.json
     rm -rf $ONOS_CDEF_FILE
-    python asset/onos-gen-config 10.2.1.10 $ONOS_CDEF_FILE --nodes $ips
+    python asset/onos-gen-config ${!op_name} $ONOS_CDEF_FILE --nodes $ips
     scp -q $ONOS_CDEF_FILE sdn@"${!oc_name}":~/onos_config/cluster.json
 
     # copy component-config file if it exists
