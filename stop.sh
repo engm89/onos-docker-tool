@@ -39,15 +39,23 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
         ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
         ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null
     fi
+
+    # shellcheck disable=SC2086
+    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=atomix')" ]; then
+        echo "Wiping out the ATOMIX container at ${!oc_name}..."
+        ssh sdn@"${!oc_name}" "sudo docker stop atomix || true" > /dev/null
+        ssh sdn@"${!oc_name}" "sudo docker rm atomix || true" > /dev/null
+    fi
 }
 
 # remove ONOS configuration directory
-echo "Removing ONOS configuration directory..."
+echo "Removing ONOS and ATOMIX configuration directory..."
 
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-
+    echo "Removing ATOMIX configuration at ${!oc_name}..."
+    ssh sdn@"${!oc_name}" "rm -rf ~/atomix_config"
     echo "Removing ONOS configuration at ${!oc_name}..."
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
 }

@@ -5,10 +5,7 @@
 
 function _usage () {
 cat << _EOF_
-usage: $(basename "$0") [OPTION] [VERSION]
-
-OPTION:
-  -l light
+usage: $(basename "$0")
 
 VERSION:
   ONOS version
@@ -22,22 +19,12 @@ _EOF_
 }
 
 REPO_PATH="opensona"
-REPO_NAME="onos-sona-nightly-docker"
-REPO_TAG="latest"
+ONOS_REPO_NAME="onos-sona-nightly-docker"
+ATOMIX_REPO_NAME="atomix-docker"
+ONOS_REPO_TAG="dev"
+ATOMIX_REPO_TAG="latest"
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
-
-if [ -z ${1} ]; then
-  REPO_TAG="latest"
-elif [ "$1" = "-l" ]; then
-  if [ -z ${2} ]; then
-    REPO_TAG="light"
-  else
-    REPO_TAG="$2-light"
-  fi
-else
-  REPO_TAG="$1"
-fi
 
 echo $REPO_TAG
 
@@ -72,14 +59,14 @@ else
 fi
 
 # start pull ONOS-SONA docker image, stop & remove ONOS-SONA container
-echo "Pulling ONOS-SONA docker image..."
+echo "Pulling ONOS-SONA, ATOMIX docker image..."
 
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
 
     echo "Pulling ONOS-SONA docker image at ${!oc_name}..."
-    ssh sdn@"${!oc_name}" "sudo docker pull $REPO_PATH/$REPO_NAME:$REPO_TAG"
+    ssh sdn@"${!oc_name}" "sudo docker pull $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
 
     # shellcheck disable=SC2086
     if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
@@ -87,11 +74,18 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
         ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
         ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null
     fi
+
+    echo "Pulling ATOMIX docker image at ${!oc_name}..."
+    ssh sdn@"${!oc_name}" "sudo docker pull $REPO_PATH/$ATOMIX_REPO_NAME:$ATOMIX_REPO_TAG"
+
+    # shellcheck disable=SC2086
+    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=atomix')" ]; then
+        echo "Wiping out existing ATOMIX container at ${!oc_name}..."
+        ssh sdn@"${!oc_name}" "sudo docker stop atomix || true" > /dev/null
+        ssh sdn@"${!oc_name}" "sudo docker rm atomix || true" > /dev/null
+    fi
 }
 
-# generate and inject cluster.json file
-echo "Generating cluster.json..."
-rm -rf /tmp/cluster.json
 ips=""
 if [ -z "$ODC_IPS" ]
 then
@@ -109,19 +103,32 @@ else
     ips=$ODC_IPS
 fi
 
-# shellcheck disable=SC2086
-python asset/onos-gen-partitions /tmp/cluster.json $ips
+echo $ips
 
 # copy ONOS configuration files under onos_config directory
 echo "Copying ONOS configs..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
+
+    ssh sdn@"${!oc_name}" "rm -rf ~/atomix_config"
+    ssh sdn@"${!oc_name}" "mkdir -p ~/atomix_config"
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
     ssh sdn@"${!oc_name}" "mkdir -p ~/onos_config"
 
-    # copy cluster.json config file
-    scp /tmp/cluster.json sdn@"${!oc_name}":~/onos_config
+    # generate and inject atomix.json file
+    echo "Generating atomix.json..."
+    ATOMIX_CDEF_FILE=/tmp/"${!oc_name}".atomix.json
+    rm -rf $ATOMIX_CDEF_FILE
+    python asset/atomix-gen-config 10.2.1.10 $ATOMIX_CDEF_FILE $ips
+    scp -q $ATOMIX_CDEF_FILE sdn@"${!oc_name}":~/atomix_config/atomix.json
+
+    # generate and inject cluster.json file
+    echo "Generating cluster.json..."
+    ONOS_CDEF_FILE=/tmp/"${!oc_name}".cluster.json
+    rm -rf $ONOS_CDEF_FILE
+    python asset/onos-gen-config 10.2.1.10 $ONOS_CDEF_FILE --nodes $ips
+    scp -q $ONOS_CDEF_FILE sdn@"${!oc_name}":~/onos_config/cluster.json
 
     # copy component-config file if it exists
     if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json ]
@@ -135,7 +142,8 @@ echo "Launching ONOS cluster..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$REPO_NAME:$REPO_TAG"
+    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name atomix -v ~/atomix_config:/root/atomix/config $REPO_PATH/$ATOMIX_REPO_NAME:$ATOMIX_REPO_TAG"
+    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
     ssh sdn@"${!oc_name}" "sudo docker ps"
 }
 
