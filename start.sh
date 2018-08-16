@@ -21,12 +21,22 @@ _EOF_
 REPO_PATH="opensona"
 ONOS_REPO_NAME="onos-sona-nightly-docker"
 ATOMIX_REPO_NAME="atomix-docker"
-ONOS_REPO_TAG="dev"
+ONOS_REPO_TAG="latest"
 ATOMIX_REPO_TAG="latest"
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
-echo $REPO_TAG
+if [ -z ${1} ]; then
+  ONOS_REPO_TAG="latest"
+elif [ "$1" = "-s" ]; then
+  ONOS_REPO_TAG="stable"
+elif [ "$1" = "-d" ]; then
+  ONOS_REPO_TAG="dev"
+else
+  ONOS_REPO_TAG="$1"
+fi
+
+echo $ONOS_REPO_TAG
 
 # shellcheck disable=SC1091
 source envSetup
