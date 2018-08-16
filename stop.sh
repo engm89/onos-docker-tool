@@ -20,42 +20,58 @@ _EOF_
 # shellcheck disable=SC1091
 source envSetup
 
-if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
+if [ ${#PUBLIC_OC_IPS[@]} -eq 0 ]; then
     echo "No ONOS Controller IP addresses were configured!"
     echo "Please configure IP address in bash_profile."
     exit 1
 fi
 
-# stop & remove ONOS-SONA container
-echo "Removing ONOS-SONA docker image..."
-
-for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+echo "Following IP addresses will be used to terminate ONOS containers."
+for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
 {
-    oc_name=${ACCESS_IPS[$i]}
-
-    # shellcheck disable=SC2086
-    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
-        echo "Wiping out the ONOS-SONA container at ${!oc_name}..."
-        ssh sdn@"${!oc_name}" "sudo docker stop onos || true" > /dev/null
-        ssh sdn@"${!oc_name}" "sudo docker rm onos || true" > /dev/null
-    fi
-
-    # shellcheck disable=SC2086
-    if [ "$(ssh sdn@${!oc_name} 'sudo docker ps -q -a -f name=atomix')" ]; then
-        echo "Wiping out the ATOMIX container at ${!oc_name}..."
-        ssh sdn@"${!oc_name}" "sudo docker stop atomix || true" > /dev/null
-        ssh sdn@"${!oc_name}" "sudo docker rm atomix || true" > /dev/null
-    fi
+    pub_oc_name=${PUBLIC_OC_IPS[$i]}
+    echo "$pub_oc_name = ${!pub_oc_name}"
 }
 
-# remove ONOS configuration directory
-echo "Removing ONOS and ATOMIX configuration directory..."
+if [ ${#PUBLIC_OCC_IPS[@]} -eq 0 ]
+then
+    PUBLIC_OCC_IPS=(${PUBLIC_OC_IPS[@]})
+fi
 
-for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+echo "Following IP address will be used to terminate storage containers."
+for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
 {
-    oc_name=${ACCESS_IPS[$i]}
-    echo "Removing ATOMIX configuration at ${!oc_name}..."
-    ssh sdn@"${!oc_name}" "rm -rf ~/atomix_config"
-    echo "Removing ONOS configuration at ${!oc_name}..."
-    ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
+    pub_occ_name=${PUBLIC_OCC_IPS[$i]}
+    echo "$pub_occ_name = ${!pub_occ_name}"
+}
+
+# stop & remove ONOS-SONA container
+echo "Removing ONOS-SONA docker container and config directory..."
+for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
+{
+    pub_oc_name=${PUBLIC_OC_IPS[$i]}
+
+    # shellcheck disable=SC2086
+    if [ "$(ssh sdn@${!pub_oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
+        echo "Wiping out the ONOS-SONA container at ${!pub_oc_name}..."
+        ssh sdn@"${!pub_oc_name}" "sudo docker stop onos || true" > /dev/null
+        ssh sdn@"${!pub_oc_name}" "sudo docker rm onos || true" > /dev/null
+    fi
+
+    ssh sdn@"${!pub_oc_name}" "rm -rf ~/onos_config"
+}
+
+echo "Removing Atomix docker container and config directory..."
+for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
+{
+    pub_occ_name=${PUBLIC_OCC_IPS[$i]}
+
+    # shellcheck disable=SC2086
+    if [ "$(ssh sdn@${!pub_occ_name} 'sudo docker ps -q -a -f name=atomix')" ]; then
+        echo "Wiping out the ATOMIX container at ${!pub_occ_name}..."
+        ssh sdn@"${!pub_occ_name}" "sudo docker stop atomix || true" > /dev/null
+        ssh sdn@"${!pub_occ_name}" "sudo docker rm atomix || true" > /dev/null
+    fi
+
+    ssh sdn@"${!pub_occ_name}" "rm -rf ~/atomix_config"
 }

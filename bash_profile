@@ -53,41 +53,75 @@ function onos-docker-site {
 
   STALE_ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
   STALE_ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
-  # shellcheck disable=SC2206
-  STALE_ACCESS_IPS=($STALE_ENV_VAR_1)
-  STALE_PRIVATE_IPS=($STALE_ENV_VAR_2)
+  STALE_ENV_VAR_3=$(env | sort | awk -F "=" '{print $1}' | grep "^ODCC[0-9]$")
+  STALE_ENV_VAR_4=$(env | sort | awk -F "=" '{print $1}' | grep "^OPCC[0-9]$")
 
-  for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
+  # shellcheck disable=SC2206
+  STALE_PUBLIC_OC_IPS=($STALE_ENV_VAR_1)
+  STALE_PRIVATE_OC_IPS=($STALE_ENV_VAR_2)
+  STALE_PUBLIC_OCC_IPS=($STALE_ENV_VAR_3)
+  STALE_PRIVATE_OCC_IPS=($STALE_ENV_VAR_4)
+
+  for ((i=0; i < ${#STALE_PUBLIC_OC_IPS[@]}; i++))
   {
-      odc_name=${STALE_ACCESS_IPS[$i]}
-      unset "$odc_name"
+      pub_oc_name=${STALE_PUBLIC_OC_IPS[$i]}
+      unset "$pub_oc_name"
   }
 
-  for ((i=0; i < ${#STALE_PRIVATE_IPS[@]}; i++))
+  for ((i=0; i < ${#STALE_PRIVATE_OC_IPS[@]}; i++))
   {
-      opc_name=${STALE_PRIVATE_IPS[$i]}
-      unset "$opc_name"
+      pri_oc_name=${STALE_PRIVATE_OC_IPS[$i]}
+      unset "$pri_oc_name"
+  }
+
+  for ((i=0; i < ${#STALE_PUBLIC_OCC_IPS[@]}; i++))
+  {
+      pub_occ_name=${STALE_PUBLIC_OCC_IPS[$i]}
+      unset "$pub_occ_name"
+  }
+
+  for ((i=0; i < ${#STALE_PRIVATE_OCC_IPS[@]}; i++))
+  {
+      pri_occ_name=${STALE_PRIVATE_OCC_IPS[$i]}
+      unset "$pri_occ_name"
   }
 
   source $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$ONOS_DOCKER_CELL_FILE
 
   ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
   ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
+  ENV_VAR_3=$(env | sort | awk -F "=" '{print $1}' | grep "^ODCC[0-9]$")
+  ENV_VAR_4=$(env | sort | awk -F "=" '{print $1}' | grep "^OPCC[0-9]$")
+
   # shellcheck disable=SC2206
-  ACCESS_IPS=($ENV_VAR_1)
-  PRIVATE_IPS=($ENV_VAR_2)
+  PUBLIC_OC_IPS=($ENV_VAR_1)
+  PRIVATE_OC_IPS=($ENV_VAR_2)
+  PUBLIC_OCC_IPS=($ENV_VAR_3)
+  PRIVATE_OCC_IPS=($ENV_VAR_4)
 
   echo "== Cell variables =="
-  for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+  for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
   {
-      oc_name=${ACCESS_IPS[$i]}
-      echo "$oc_name = ${!oc_name}"
+      pub_oc_name=${PUBLIC_OC_IPS[$i]}
+      echo "$pub_oc_name = ${!pub_oc_name}"
   }
 
-  for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+  for ((i=0; i < ${#PRIVATE_OC_IPS[@]}; i++))
   {
-      op_name=${PRIVATE_IPS[$i]}
-      echo "$op_name = ${!op_name}"
+      pri_oc_name=${PRIVATE_OC_IPS[$i]}
+      echo "$pri_oc_name = ${!pri_oc_name}"
+  }
+
+  for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
+  {
+      pub_occ_name=${PUBLIC_OCC_IPS[$i]}
+      echo "$pub_occ_name = ${!pub_occ_name}"
+  }
+
+  for ((i=0; i < ${#PRIVATE_OCC_IPS[@]}; i++))
+  {
+      pri_occ_name=${PRIVATE_OCC_IPS[$i]}
+      echo "$pri_occ_name = ${!pri_occ_name}"
   }
 
   COMPONENT_CONFIG_FILE=component-cfg.json

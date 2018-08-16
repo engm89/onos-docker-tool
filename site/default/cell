@@ -3,6 +3,22 @@ export ODC2=192.168.56.102
 export ODC3=192.168.56.103
 
 # If you need to use private IP address to form an ONOS cluster,
-# please configure ODC_IPS using private IP addresses.
-# If ODC_IPS is not configured, ODC1 ... ODCN will be used instead.
-# export ODC_IPS="192.168.56.101 192.168.56.102 192.168.56.103"
+# please configure OPC variables using private IP addresses.
+# If OPC is not configured, ODC1 ... ODCN will be used instead.
+export OPC1=10.10.10.101
+export OPC1=10.10.10.102
+export OPC1=10.10.10.103
+
+# If you need to configure ONOS cluster and Atomix cluster in different way,
+# please configure ODCC variables using public atomix IP addresses.
+# If ODCC is not configured, ODC1 ... ODCN will be used instead.
+export ODCC1=192.168.56.101
+export ODCC2=192.168.56.102
+export ODCC3=192.168.56.103
+
+# If you need to use private IP address to form an Atomix cluster,
+# please configure OPCC variables using private IP addresses.
+# If OPCC is not configured, ODCC1 ... ODCCN will be used instead.
+export OPCC1=10.10.10.101
+export OPCC1=10.10.10.102
+export OPCC1=10.10.10.103
