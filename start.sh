@@ -80,11 +80,16 @@ for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
     echo "$pub_occ_name = ${!pub_occ_name}"
 }
 
-if [ ${#PRIVATE_OCC_IPS[@]} -eq 0 ] && [ ${#PUBLIC_OCC_IPS[@]} -ne 0 ]
+if [ ${#PRIVATE_OCC_IPS[@]} -ne 0 ]
 then
-    OCC_IPS=(${PUBLIC_OCC_IPS[@]})
-else
     OCC_IPS=(${PRIVATE_OCC_IPS[@]})
+else
+    if [ ${#PUBLIC_OCC_IPS[@]} -ne 0 ]
+    then
+        OCC_IPS=(${PUBLIC_OCC_IPS[@]})
+    else
+        OCC_IPS=(${OC_IPS[@]})
+    fi
 fi
 
 echo "Following IP address will be used to form storage cluster."
