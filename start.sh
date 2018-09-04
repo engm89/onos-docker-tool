@@ -8,7 +8,7 @@ cat << _EOF_
 usage: $(basename "$0") [OPTION] [VERSION]
 
 OPTION:
-  -l light
+  version number (e.g., stable)
 
 VERSION:
   ONOS version
@@ -23,18 +23,12 @@ _EOF_
 
 REPO_PATH="opensona"
 REPO_NAME="onos-sona-nightly-docker"
-REPO_TAG="latest"
+REPO_TAG="stable"
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
 if [ -z ${1} ]; then
-  REPO_TAG="latest"
-elif [ "$1" = "-l" ]; then
-  if [ -z ${2} ]; then
-    REPO_TAG="light"
-  else
-    REPO_TAG="$2-light"
-  fi
+  REPO_TAG="stable"
 else
   REPO_TAG="$1"
 fi
