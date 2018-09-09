@@ -37,7 +37,6 @@ echo $REPO_TAG
 
 # shellcheck disable=SC1091
 source envSetup
-ODC_IPS_ALT=""
 
 if [ ${#ACCESS_IPS[@]} -eq 0 ]; then
     echo "No ONOS Controller IP addresses were configured!"
@@ -49,20 +48,27 @@ echo "Following IP addresses will be used to spawn ONOS containers."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ODC_IPS_ALT="$ODC_IPS_ALT ${!oc_name}"
     echo "$oc_name = ${!oc_name}"
 }
 
-if [ -z "$ODC_IPS" ]
+if [ ${#PRIVATE_IPS[@]} -eq 0 ]
 then
     echo "ONOS Cluster IP addresses were NOT configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$ODC_IPS_ALT"
+    for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
+    {
+        oc_name=${ACCESS_IPS[$i]}
+        echo "$oc_name = ${!oc_name}"
+    }
 
 else
     echo "ONOS Cluster IP addresses were configured!"
     echo "Following IP address will be used to form an ONOS cluster."
-    echo "$ODC_IPS"
+    for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+    {
+        op_name=${PRIVATE_IPS[$i]}
+        echo "$op_name = ${!op_name}"
+    }
 fi
 
 # start pull ONOS-SONA docker image, stop & remove ONOS-SONA container
@@ -87,7 +93,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 echo "Generating cluster.json..."
 rm -rf /tmp/cluster.json
 ips=""
-if [ -z "$ODC_IPS" ]
+if [ ${#PRIVATE_IPS[@]} -eq 0 ]
 then
     for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     {
@@ -100,7 +106,16 @@ then
         fi
     }
 else
-    ips=$ODC_IPS
+    for ((i=0; i < ${#PRIVATE_IPS[@]}; i++))
+    {
+        oc_name=${PRIVATE_IPS[$i]}
+        if [ $i -eq 0 ]
+        then
+            ips="${!oc_name}"
+        else
+            ips="$ips ${!oc_name}"
+        fi
+    }
 fi
 
 # shellcheck disable=SC2086
@@ -111,6 +126,14 @@ echo "Copying ONOS configs..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
+
+    if [ ${#PRIVATE_IPS[@]} -eq 0 ]
+    then
+        op_name=${ACCESS_IPS[$i]}
+    else
+        op_name=${PRIVATE_IPS[$i]}
+    fi
+
     ssh sdn@"${!oc_name}" "rm -rf ~/onos_config"
     ssh sdn@"${!oc_name}" "mkdir -p ~/onos_config"
 
@@ -120,7 +143,7 @@ for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
     # copy component-config file if it exists
     if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json ]
     then
-      scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json sdn@"${!oc_name}":~/onos_config
+        scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/component-cfg.json sdn@"${!oc_name}":~/onos_config
     fi
 }
 

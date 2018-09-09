@@ -2,20 +2,31 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-STALE_ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+STALE_ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+STALE_ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
+
 # shellcheck disable=SC2206
-STALE_ACCESS_IPS=($STALE_ENV_VAR)
+STALE_ACCESS_IPS=($STALE_ENV_VAR_1)
+STALE_PRIVATE_IPS=($STALE_ENV_VAR_2)
 
 for ((i=0; i < ${#STALE_ACCESS_IPS[@]}; i++))
 {
     odc_name=${STALE_ACCESS_IPS[$i]}
     unset "$odc_name"
 }
-unset ODC_IPS
+
+for ((i=0; i < ${#STALE_PRIVATE_IPS[@]}; i++))
+{
+    opc_name=${STALE_PRIVATE_IPS[$i]}
+    unset "$opc_name"
+}
 
 # shellcheck disable=SC1091
 source $DIR/bash_profile
 
-ENV_VAR=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+ENV_VAR_1=$(env | sort | awk -F "=" '{print $1}' | grep "^ODC[0-9]$")
+ENV_VAR_2=$(env | sort | awk -F "=" '{print $1}' | grep "^OPC[0-9]$")
+
 # shellcheck disable=SC2206
-ACCESS_IPS=($ENV_VAR)
+ACCESS_IPS=($ENV_VAR_1)
+PRIVATE_IPS=($ENV_VAR_2)
