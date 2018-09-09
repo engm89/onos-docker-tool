@@ -152,8 +152,20 @@ echo "Launching ONOS cluster..."
 for ((i=0; i < ${#ACCESS_IPS[@]}; i++))
 {
     oc_name=${ACCESS_IPS[$i]}
-    ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$REPO_NAME:$REPO_TAG"
-    ssh sdn@"${!oc_name}" "sudo docker ps"
+
+    # copy keystore.jks file if it exists
+    if [ ! -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/keystore.jks ]
+    then
+        echo "Keystore file is not found. Deploying ONOS without keystore."
+        ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$REPO_NAME:$REPO_TAG"
+    else
+        echo "Keystore file is found. Deploying ONOS with keystore."
+        ssh sdn@"${!oc_name}" "rm -rf ~/keystore"
+        ssh sdn@"${!oc_name}" "mkdir -p ~/keystore"
+        scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/keystore.jks sdn@"${!oc_name}":~/keystore
+        ssh sdn@"${!oc_name}" "sudo docker run -itd --network host --name onos -v ~/keystore:/root/onos/keystore -v ~/onos_config:/root/onos/config $REPO_PATH/$REPO_NAME:$REPO_TAG"
+    fi
+    ssh sdn@"${!oc_name}" "sudo docker ps | grep onos"
 }
 
 echo "Done!"
