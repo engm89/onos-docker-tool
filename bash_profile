@@ -7,6 +7,8 @@ if [ -z ${ONOS_DOCKER} ]; then
   ONOS_DOCKER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 fi
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # Root of the ONOS DOCKER TOOL source tree
 export ONOS_DOCKER=${ONOS_DOCKER:-~/onos-docker-tool}
 
@@ -123,6 +125,16 @@ function onos-docker-site {
       pri_occ_name=${PRIVATE_OCC_IPS[$i]}
       echo "$pri_occ_name = ${!pri_occ_name}"
   }
+
+  KEYSTORE_FILE=keystore.jks
+  if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$KEYSTORE_FILE ]
+  then
+    KEYSTORE_FILE_PATH=$ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$KEYSTORE_FILE
+    echo "== Path of keystore file =="
+    echo ${KEYSTORE_FILE_PATH}
+  else
+    echo "No keystore.jks file found. HTTPS service will not be available..."
+  fi
 
   COMPONENT_CONFIG_FILE=component-cfg.json
   if [ -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/$COMPONENT_CONFIG_FILE ]
