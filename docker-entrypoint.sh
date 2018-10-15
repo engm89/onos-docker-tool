@@ -28,8 +28,8 @@ if [ "${AUTHORIZED_KEYS}" != "**None**" ]; then
         fi
     done
 
-		cp /etc/ssh/ssh_host_rsa_key /root/.ssh/rsa_id
-		cp /etc/ssh/ssh_host_rsa_key.pub /root/.ssh/rsa_id.pub
+		cp /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa
+		cp /etc/ssh/ssh_host_rsa_key.pub /root/.ssh/id_rsa.pub
 fi
 
 # set password root is root
