@@ -202,6 +202,9 @@ for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
     ssh sdn@"${!pub_occ_name}" "sudo docker ps | grep atomix"
 }
 
+echo "Waiting for Atomix cluster initialization... "
+sleep 10
+
 # start ONOS-SONA container
 echo "Launching ONOS cluster..."
 for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
