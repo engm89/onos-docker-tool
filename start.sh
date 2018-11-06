@@ -203,7 +203,7 @@ for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
 }
 
 echo "Waiting for Atomix cluster initialization... "
-sleep 10
+sleep 60
 
 # start ONOS-SONA container
 echo "Launching ONOS cluster..."
