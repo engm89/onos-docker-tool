@@ -55,6 +55,7 @@ for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
     if [ "$(ssh sdn@${!pub_oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
         echo "Wiping out the ONOS-SONA container at ${!pub_oc_name}..."
         ssh sdn@"${!pub_oc_name}" "sudo docker stop onos || true" > /dev/null
+        sleep 5
         ssh sdn@"${!pub_oc_name}" "sudo docker rm onos || true" > /dev/null
     fi
 
@@ -70,6 +71,7 @@ for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
     if [ "$(ssh sdn@${!pub_occ_name} 'sudo docker ps -q -a -f name=atomix')" ]; then
         echo "Wiping out the ATOMIX container at ${!pub_occ_name}..."
         ssh sdn@"${!pub_occ_name}" "sudo docker stop atomix || true" > /dev/null
+        sleep 5
         ssh sdn@"${!pub_occ_name}" "sudo docker rm atomix || true" > /dev/null
     fi
 
