@@ -200,7 +200,7 @@ echo "Launching Atomix cluster..."
 for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
 {
     pub_occ_name=${PUBLIC_OCC_IPS[$i]}
-    ssh sdn@"${!pub_occ_name}" "sudo docker run -itd --network host --name atomix -v ~/atomix_config:/root/atomix/config $REPO_PATH/$ATOMIX_REPO_NAME:$ATOMIX_REPO_TAG"
+    ssh sdn@"${!pub_occ_name}" "sudo docker run --rm -itd --network host --name atomix -v ~/atomix_config:/root/atomix/config $REPO_PATH/$ATOMIX_REPO_NAME:$ATOMIX_REPO_TAG"
     ssh sdn@"${!pub_occ_name}" "sudo docker ps | grep atomix"
 }
 
@@ -214,13 +214,13 @@ for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
     if [ ! -f $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/keystore.jks ]
     then
       echo "Keystore file is not found. Deploying ONOS without keystore."
-      ssh sdn@"${!pub_oc_name}" "sudo docker run -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
+      ssh sdn@"${!pub_oc_name}" "sudo docker run --rm -itd --network host --name onos -v ~/onos_config:/root/onos/config $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
     else
       echo "Keystore file is found. Deploying ONOS with keystore."
       ssh sdn@"${!pub_oc_name}" "rm -rf ~/keystore"
       ssh sdn@"${!pub_oc_name}" "mkdir -p ~/keystore"
       scp $ONOS_DOCKER_SITE_ROOT/$ONOS_DOCKER_SITE/keystore.jks sdn@"${!pub_oc_name}":~/keystore
-      ssh sdn@"${!pub_oc_name}" "sudo docker run -itd --network host --name onos -v ~/keystore:/root/onos/keystore -v ~/onos_config:/root/onos/config $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
+      ssh sdn@"${!pub_oc_name}" "sudo docker run --rm -itd --network host --name onos -v ~/keystore:/root/onos/keystore -v ~/onos_config:/root/onos/config $REPO_PATH/$ONOS_REPO_NAME:$ONOS_REPO_TAG"
     fi
     ssh sdn@"${!pub_oc_name}" "sudo docker ps | grep onos"
 }
