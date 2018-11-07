@@ -208,7 +208,7 @@ echo "Waiting for Atomix cluster initialization... "
 for ((i=0; i < ${#PUBLIC_OCC_IPS[@]}; i++))
 {
     pub_occ_name=${PUBLIC_OCC_IPS[$i]}
-    while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${!pub_occ_name}:5678/v1/status" != "200" ]]; do sleep 1; done
+    while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${!pub_occ_name}:5678/v1/status)" != "200" ]]; do sleep 5; done
 }
 
 # start ONOS-SONA container
