@@ -21,8 +21,8 @@ _EOF_
 REPO_PATH="opensona"
 ONOS_REPO_NAME="onos-sona-nightly-docker"
 ATOMIX_REPO_NAME="atomix-docker"
-ONOS_REPO_TAG="dev"
-ATOMIX_REPO_TAG="dev"
+ONOS_REPO_TAG="incubate"
+ATOMIX_REPO_TAG="incubate"
 
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
