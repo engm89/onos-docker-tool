@@ -27,8 +27,8 @@ ATOMIX_REPO_TAG="incubate"
 [ "$1" = "-h" ] || [ "$1" = '-?' ] && _usage && exit 0
 
 if [ -z ${1} ]; then
-  ONOS_REPO_TAG="dev"
-  ATOMIX_REPO_TAG="dev"
+  ONOS_REPO_TAG="incubate"
+  ATOMIX_REPO_TAG="incubate"
 else
   ONOS_REPO_TAG="$1"
   ATOMIX_REPO_TAG="$1"
