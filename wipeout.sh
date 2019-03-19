@@ -52,8 +52,6 @@ for ((i=0; i < ${#PUBLIC_OC_IPS[@]}; i++))
     pub_oc_name=${PUBLIC_OC_IPS[$i]}
 
     # shellcheck disable=SC2086
-    if [ "$(ssh sdn@${!pub_oc_name} 'sudo docker ps -q -a -f name=onos')" ]; then
-        echo "Wiping out the ONOS-SONA container and image at ${!pub_oc_name}..."
-        ssh sdn@"${!pub_oc_name}" "sudo docker system prune -a || true" > /dev/null
-    fi
+    echo "Wiping out the ONOS-SONA container and image at ${!pub_oc_name}..."
+    ssh sdn@"${!pub_oc_name}" "sudo docker system prune -a || true" > /dev/null
 }
