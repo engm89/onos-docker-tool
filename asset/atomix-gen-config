@@ -2,10 +2,8 @@
 """
 usage: atomix-gen-config [-h] [-s PARTITION_SIZE] [-n NUM_PARTITIONS]
                          [node_ip] [filename] [node_ip [node_ip ...]]
-
 Generate the partitions json file given a list of IPs or from the $OCC*
 environment variables.
-
 positional arguments:
   filename              File to write output to. If none is provided, output
                         is written to stdout.
@@ -13,7 +11,6 @@ positional arguments:
                         IPs are given, will use the $OCC* environment
                         variables. NOTE: these arguemnts are only processed
                         after the filename argument.
-
 optional arguments:
   -h, --help            show this help message and exit
   -s PARTITION_SIZE, --partition-size PARTITION_SIZE
@@ -112,7 +109,7 @@ if __name__ == '__main__':
   args = parser.parse_args()
   filename = args.filename
   partition_size = args.partition_size
-  local_member_id = get_local_node(args.node, args.nodes)
+  local_member_id = get_local_node(args.node)
   local_member_address = get_local_address(args.node, args.nodes)
   nodes = get_nodes(args.nodes)
   num_partitions = args.num_partitions
@@ -135,14 +132,20 @@ if __name__ == '__main__':
           'type': 'raft',
           'partitions': 1,
           'partitionSize': len(nodes),
-          'members': [node['id'] for node in nodes]
+          'members': [node['id'] for node in nodes],
+          'storage': {
+              'level': 'mapped'
+          }
       },
       'partitionGroups': {
           'raft': {
               'type': 'raft',
               'partitions': num_partitions,
               'partitionSize': partition_size,
-              'members': [node['id'] for node in nodes]
+              'members': [node['id'] for node in nodes],
+              'storage': {
+                  'level': 'mapped'
+              }
           }
       }
   }

@@ -2,10 +2,8 @@
 """
 usage: onos-gen-config [-h] [-s PARTITION_SIZE] [-n NUM_PARTITIONS]
                             [filename] [node_ip [node_ip ...]]
-
 Generate the partitions json file given a list of IPs or from the $OCC*
 environment variables.
-
 positional arguments:
   filename              File to write output to. If none is provided, output
                         is written to stdout.
@@ -13,7 +11,6 @@ positional arguments:
                         IPs are given, will use the $OC* environment
                         variables. NOTE: these arguments are only processed
                         after the filename argument.
-
 optional arguments:
   -h, --help            show this help message and exit
   -s PARTITION_SIZE, --partition-size PARTITION_SIZE
