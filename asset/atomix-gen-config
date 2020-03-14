@@ -109,7 +109,7 @@ if __name__ == '__main__':
   args = parser.parse_args()
   filename = args.filename
   partition_size = args.partition_size
-  local_member_id = get_local_node(args.node)
+  local_member_id = get_local_node(args.node, args.nodes)
   local_member_address = get_local_address(args.node, args.nodes)
   nodes = get_nodes(args.nodes)
   num_partitions = args.num_partitions
